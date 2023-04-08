@@ -29,16 +29,25 @@ def main():
     """
     parser = arguments_parser.prepare_parser()
     args = parser.parse_args()
-
+    
+    
+    # creating video object
     capture = cv2.VideoCapture(args.video_file)
+    # bg subtraction object
     background_subtractor = cv2.createBackgroundSubtractorKNN()
-
+    
+    #reading from video
     read_succes, video_frame = capture.read()
 
     height, width, _ = video_frame.shape
     frames_number = capture.get(cv2.CAP_PROP_FRAME_COUNT)
     fourcc = cv2.VideoWriter_fourcc("m", "p", "4", "v")
+    
+    #output vid
     video = cv2.VideoWriter(args.video_output + ".mp4", fourcc, 30.0, (width, height))
+    
+    # initialize an image of unsigned integers, size and shape of video
+    # so I need size and shape of --? input img, or the video of the stuff moving on the input image
     accumulated_image = np.zeros((height, width), np.uint8)
 
     count = 0
@@ -48,7 +57,9 @@ def main():
         if read_succes:
             background_filter = background_subtractor.apply(video_frame)
             if count > args.video_skip and count % args.take_every == 0:
-
+                
+                
+                # using vision.py functions-- so vision.py is the thing to study
                 erodated_image = vision.apply_morph(background_filter,
                                                     morph_type=cv2.MORPH_ERODE,
                                                     kernel_size=(5, 5))
